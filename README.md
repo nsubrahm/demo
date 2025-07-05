@@ -40,6 +40,7 @@ sudo ./install-docker.sh
 4. Generate general configuration.
 
 ```bash
+export PROJECT_HOME=$HOME/demo
 alias python=python3
 cd ${PROJECT_HOME}
 mkdir -p launch/conf/general
