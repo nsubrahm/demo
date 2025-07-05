@@ -56,6 +56,11 @@ get_ram() {
   free | awk '/Mem:/ {printf("%.1f", $3/$2*100)}'
 }
 
+get_space() {
+  # used/total * 100
+  df -h /mount/point | awk 'NR==2 {print $5}'
+}
+
 # header
 echo "Press Ctrl-C to stop. Poll every $INTERVAL s."
 
@@ -64,6 +69,7 @@ while true; do
   timestamp=$(date '+%Y-%m-%dT%H:%M:%S')
   cpu=$(get_cpu)
   ram=$(get_ram)
-  printf '%s  CPU: %5s%%  RAM: %5s%%\n' "$timestamp" "$cpu" "$ram"
+  hdd=$(get_space)
+  printf '%s  CPU: %5s%%  RAM: %5s%% HDD:%5s%%\n' "$timestamp" "$cpu" "$ram" "$hdd"
   sleep "$INTERVAL"
 done
