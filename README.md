@@ -4,14 +4,17 @@ This project documents steps to launch a demo with `10` machines.
 
 - [Introduction](#introduction)
   - [Pre-requisites](#pre-requisites)
-  - [Steps](#steps)
+  - [Steps - Demo](#steps---demo)
+  - [Steps - Simulator](#steps---simulator)
 
 ## Pre-requisites
 
-1. EC2 instance - `m6g.xlarge`
-2. Additional volume of 16 GiB.
+1. EC2 instance - `r8g.xlarge` and additional volume of 16 GiB
+2. EC2 instance - `t4g.medium` to host the simulators.
 
-## Steps
+## Steps - Demo
+
+These steps are to be hosted on `r8g.large` instance to install the demo.
 
 1. Clone repo.
 
@@ -82,5 +85,43 @@ for i in $(seq -w 1 10); do
   source launch/conf/${CONF_DIR}/init.env && docker compose --env-file launch/conf/${CONF_DIR}/init.env -f launch/stacks/init.yaml up -d
   source launch/conf/${CONF_DIR}/apps.env && docker compose --env-file launch/conf/${CONF_DIR}/apps.env -f launch/stacks/apps.yaml up -d
   sleep 5
+done
+```
+
+## Steps - Simulator
+
+These steps are to be hosted on `t4g.medium` instance to host the simulator.
+
+1. Clone repo.
+
+```bash
+git clone https://github.com/nsubrahm/demo.git
+export PROJECT_HOME=$HOME/demo
+cd demo
+```
+
+2. Install Docker
+
+```bash
+cd ${PROJECT_HOME}/setup
+sudo ./install-docker.sh
+```
+
+3. Generate client configuration. Set `HOST` to public IP address of EC2 instance that hosts the demo.
+
+```bash
+cd ${PROJECT_HOME}
+export HOST=
+for i in $(seq -w 1 10); do
+ tools/client-config.sh ${HOST} m0$i
+done
+```
+
+4. Start simulators.
+
+```bash
+for i in $(seq -w 1 10); do
+ export MACHINE_ID=m0$i
+ docker run --rm -d --name m0$i-simulator --env-file ../configs/m0$i.env ghcr.io/nsubrahm/restsim:latest
 done
 ```
