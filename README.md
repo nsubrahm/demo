@@ -40,9 +40,10 @@ sudo ./install-docker.sh
 4. Generate general configuration.
 
 ```bash
+alias python=python3
 cd ${PROJECT_HOME}
 mkdir -p launch/conf/general
-python scripts/main.py -f config.json
+python scripts/main.py -f configs/config.json
 ```
 
 5. Generate configuration for machines.
@@ -79,5 +80,6 @@ for i in $(seq -w 1 10); do
   export CONF_DIR=m0$i
   source launch/conf/${CONF_DIR}/init.env && docker compose --env-file launch/conf/${CONF_DIR}/init.env -f launch/stacks/init.yaml up -d
   source launch/conf/${CONF_DIR}/apps.env && docker compose --env-file launch/conf/${CONF_DIR}/apps.env -f launch/stacks/apps.yaml up -d
+  sleep 5
 done
 ```
