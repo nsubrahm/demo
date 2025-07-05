@@ -1,0 +1,10 @@
+{
+  "PROJECT_NAME": "M001",
+  "SCHEMA_NAME": "org1",
+  "MACHINE_ID_CAPS": "M001",
+  "MACHINE_ID": "m001",
+  "NUM_PARAMETERS": 5,
+  "NUM_MACHINES": 3,
+  "templateDir" : "launch/templates",
+  "outputDir": "launch/conf"
+}

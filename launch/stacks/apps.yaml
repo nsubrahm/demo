@@ -1,0 +1,124 @@
+services:
+  httpin:
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/http-inputs:${HTTP_INPUTS_TAG:-latest}
+    env_file:
+      - ../conf/${CONF_DIR}/httpInputs.env
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS:-1}      
+    healthcheck:
+      test: /work/health
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+    networks:
+      mitra:
+        aliases:
+          - ${MACHINE_ID:-default}-httpin
+
+  alarms:
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/alarms:${ALARMS_TAG:-latest}
+    depends_on:
+      httpin:
+        condition: service_healthy
+    env_file:
+      - ../conf/${CONF_DIR}/alarms.env
+    networks:
+      - mitra
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS:-1}
+    healthcheck:
+      test: /work/health
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+
+  alerts:
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/alerts:${ALERTS_TAG:-latest}
+    depends_on:
+      httpin:
+        condition: service_healthy    
+    env_file:
+      - ../conf/${CONF_DIR}/alerts.env
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS:-1}
+    networks:
+      - mitra
+    healthcheck:
+      test: /work/health
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+
+  collector:
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/collector:${COLLECTOR_TAG:-latest}
+    depends_on:
+      httpin:
+        condition: service_healthy
+      alarms:
+        condition: service_healthy
+      alerts:
+        condition: service_healthy    
+    env_file:
+      - ../conf/${CONF_DIR}/collector.env
+    networks:
+      - mitra
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS:-1}
+    healthcheck:
+      test: /work/health
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+
+  persist:
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/persist:${PERSIST_TAG:-latest}
+    depends_on:
+      collector:
+        condition: service_healthy
+    env_file:
+      - ../conf/${CONF_DIR}/persist.env
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS:-1}
+    networks:
+      - mitra
+    healthcheck:
+      test: /work/health
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+
+  analytics:
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/analytics-service:${ANALYTICS_TAG:-latest}
+    depends_on:
+      persist:
+        condition: service_healthy
+    env_file:
+      - ../conf/${CONF_DIR}/analytics-service.env
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS:-1}      
+    healthcheck:
+      test: /work/health
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+    networks:
+      mitra:
+        aliases:
+          - ${MACHINE_ID:-default}-analytics      
+
+networks:
+  mitra:
+    external: true
+    name: mitra

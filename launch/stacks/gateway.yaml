@@ -1,0 +1,16 @@
+services:
+  gateway:
+    container_name: ${COMPOSE_PROJECT_NAME}-gateway
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/gateway:${GATEWAY_TAG:-latest}
+    env_file:
+      - ../conf/general/license.env
+      - ../conf/general/general.env 
+    ports:
+      - "80:80"
+    networks:
+      - mitra
+
+networks:
+  mitra:
+    external: true
+    name: mitra

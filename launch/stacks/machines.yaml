@@ -1,0 +1,24 @@
+services:
+  topics:
+    container_name: ${COMPOSE_PROJECT_NAME}-topics
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/kafka-tools:${KAFKA_TOOLS_TAG:-latest}
+    env_file:
+      - ../conf/general/machines-master.env
+    networks:
+      - mitra
+
+  queries:
+    container_name: ${COMPOSE_PROJECT_NAME}-queries
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/queries:${QUERIES_TAG:-latest}
+    depends_on:
+      topics:
+        condition: service_completed_successfully
+    env_file:
+      - ../conf/general/queries-master.env
+    networks:
+      - mitra
+
+networks:
+  mitra:
+    external: true
+    name: mitra

@@ -1,0 +1,21 @@
+services:
+  configs:
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/configs:${CONFIGS_TAG:-latest}
+    env_file:
+      - ../conf/general/configs.env
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS:-1}      
+    healthcheck:
+      test: /work/health
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+    networks:
+     - mitra
+
+networks:
+  mitra:
+    external: true
+    name: mitra

@@ -1,0 +1,16 @@
+# Project configuration
+COMPOSE_PROJECT_NAME=mitra-apps-{{ MACHINE_ID }}
+CONTAINER_REGISTRY=ghcr.io
+CONTAINER_REPOSITORY=nsubrahm
+
+# Service configuration
+MACHINE_ID={{ MACHINE_ID }}
+REPLICAS=5
+
+# Container image tags
+#HTTP_INPUTS_TAG=
+#ALERTS_TAG=
+#ALARMS_TAG=
+#COLLECTOR_TAG= 
+#PERSIST_TAG=
+#ANALYTICS_TAG=

@@ -1,0 +1,70 @@
+services:
+  broker:
+    container_name: ${COMPOSE_PROJECT_NAME}-broker
+    image: confluentinc/cp-kafka:${KAFKA_TAG:-latest}
+    env_file:
+      - ../conf/general/general.env
+      - ../conf/general/broker.env
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092"]
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+    networks:
+      - mitra
+
+  ksqldb:
+    container_name: ${COMPOSE_PROJECT_NAME}-ksqldb
+    image: confluentinc/cp-ksqldb-server:${KAFKA_SQLDB_TAG:-latest}
+    depends_on:
+      broker:
+        condition: service_healthy
+    env_file:
+      - ../conf/general/general.env
+      - ../conf/general/ksql.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8088"]
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+    networks:
+      - mitra
+
+  tscaledb:
+    container_name: ${COMPOSE_PROJECT_NAME}-tscaledb
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/tscaledb:${TSCALEDB_TAG:-latest}
+    env_file:
+      - ../conf/general/general.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+    volumes:
+      - /mnt/pg:/mnt/pg
+    networks:
+      - mitra
+
+  bouncer:
+    container_name: ${COMPOSE_PROJECT_NAME}-bouncer
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/bouncer:${BOUNCER_TAG:-latest}
+    depends_on:
+      tscaledb:
+        condition: service_healthy
+    env_file:
+      - ../conf/general/general.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h tscaledb"]
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+    networks:
+      - mitra
+
+networks:
+  mitra:
+    name: mitra
