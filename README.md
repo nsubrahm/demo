@@ -107,21 +107,36 @@ cd ${PROJECT_HOME}/setup
 sudo ./install-docker.sh
 ```
 
-3. Generate client configuration. Set `HOST` to public IP address of EC2 instance that hosts the demo.
+3. Login to GHCR.
+
+```bash
+docker login ghcr.io -u USERNAME
+```
+
+4. Generate client configuration. Set `HOST` to public IP address of EC2 instance that hosts the demo. The third argument is frequency and is set to 100ms by default.
 
 ```bash
 cd ${PROJECT_HOME}
-export HOST=
 for i in $(seq -w 1 10); do
- tools/client-config.sh ${HOST} m0$i
+ tools/client-config.sh ${HOST} m0$i 100
 done
 ```
 
-4. Start simulators.
+5. Start simulators.
+
+```bash
+cd ${PROJECT_HOME}
+for i in $(seq -w 1 10); do
+ export MACHINE_ID=m0$i
+ docker run --rm -d --name m0$i-simulator --env-file configs/m0$i.env ghcr.io/nsubrahm/restsim:latest
+done
+```
+
+6. Stop simulators
 
 ```bash
 for i in $(seq -w 1 10); do
  export MACHINE_ID=m0$i
- docker run --rm -d --name m0$i-simulator --env-file ../configs/m0$i.env ghcr.io/nsubrahm/restsim:latest
+ docker stop m0$i-simulator
 done
 ```

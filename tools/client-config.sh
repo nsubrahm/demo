@@ -8,12 +8,13 @@ fi
 
 HOST="$1"
 MACHINE_ID="$2"
+FREQUENCY="$3"
 
-cat <<EOF >"../configs/${MACHINE_ID}.env"
-FREQUENCY=1000
+cat <<EOF >"configs/${MACHINE_ID}.env"
+FREQUENCY=$FREQUENCY
 BASE_URL=http://$HOST:80
 MACHINE_ID=$MACHINE_ID
 API_ENDPOINT=/data
 TZ=Asia/Kolkata
 EOF
-echo "Config written to ../configs/${MACHINE_ID}.env"
+echo "Config written to configs/${MACHINE_ID}.env"
