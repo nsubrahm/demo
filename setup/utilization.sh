@@ -70,6 +70,6 @@ while true; do
   cpu=$(get_cpu)
   ram=$(get_ram)
   hdd=$(get_space)
-  printf '%s  CPU: %5s%%  RAM: %5s%% HDD:%5s%%\n' "$timestamp" "$cpu" "$ram" "$hdd"
+  printf '%s  CPU: %5s%%  RAM: %5s%% HDD:%5s\n' "$timestamp" "$cpu" "$ram" "$hdd"
   sleep "$INTERVAL"
 done
