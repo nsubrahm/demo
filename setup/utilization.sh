@@ -58,7 +58,7 @@ get_ram() {
 
 get_space() {
   # used/total * 100
-  df -h /mount/point | awk 'NR==2 {print $5}'
+  df -h /mnt/pg | awk 'NR==2 {print $5}'
 }
 
 # header
