@@ -1,8 +1,8 @@
 # Usage: ./client-config.sh <host> <machineId>
 # Example: ./client-config.sh 13.203.65.68 m001
 
-if [ "$#" -ne 2 ]; then
-  echo "Usage: $0 <host> <machineId>"
+if [ "$#" -ne 3 ]; then
+  echo "Usage: $0 <host> <machineId> <frequency>"
   exit 1
 fi
 
