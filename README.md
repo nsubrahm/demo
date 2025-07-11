@@ -11,7 +11,7 @@ This project documents steps to launch a demo with `NUM_MACHINES` machines.
 
 ## Pre-requisites
 
-1. EC2 instance - `r8g.xlarge` and additional volume of 16 GiB
+1. EC2 instance - `m7g.4xlarge` and additional volume of 16 GiB.
 2. EC2 instance - `t4g.medium` to host the simulators.
 
 ## Steps - Demo
@@ -22,14 +22,16 @@ These steps are to be hosted on `r8g.large` instance to install the demo.
 
 ```bash
 git clone https://github.com/nsubrahm/demo.git
-export PROJECT_HOME=$HOME/demo
-alias python=python3
-echo "export PROJECT_HOME=$HOME/demo" >> $HOME/.bashrc
-echo "alias python=python3" >> $HOME/.bashrc
 cd demo
 chmod +x setup/*.sh
 chmod +x tools/*.sh
+# Set-up
+alias python=python3
 export NUM_MACHINES=10
+export PROJECT_HOME=$HOME/demo
+echo "alias python=python3" >> $HOME/.bashrc
+echo "export NUM_MACHINES=10" >> $HOME/.bashrc
+echo "export PROJECT_HOME=$HOME/demo" >> $HOME/.bashrc
 ```
 
 2. Set-up volume for PostgreSQL. Check `lsblk` output to confirm secondary volume exists.
@@ -104,12 +106,14 @@ These steps are to be hosted on `t4g.medium` instance to host the simulator.
 
 ```bash
 git clone https://github.com/nsubrahm/demo.git
-export PROJECT_HOME=$HOME/demo
-echo "export PROJECT_HOME=$HOME/demo" >> $HOME/.bashrc
 cd demo
 chmod +x setup/*.sh
 chmod +x tools/*.sh
+# Set-up
 export NUM_MACHINES=10
+export PROJECT_HOME=$HOME/demo
+echo "export NUM_MACHINES=10" >> $HOME/.bashrc
+echo "export PROJECT_HOME=$HOME/demo" >> $HOME/.bashrc
 ```
 
 2. Install Docker
@@ -125,12 +129,12 @@ sudo ./install-docker.sh
 docker login ghcr.io -u USERNAME
 ```
 
-4. Generate client configuration. Set `HOST` to public IP address of EC2 instance that hosts the demo. The third argument is frequency and is set to NUM_MACHINES0ms by default.
+4. Generate client configuration. Set `HOST` to public IP address of EC2 instance that hosts the demo. The third argument is frequency and is set to `1000ms` by default.
 
 ```bash
 cd ${PROJECT_HOME}
 for i in $(seq -w 1 ${NUM_MACHINES}); do
- tools/client-config.sh ${HOST} m0$i 1000
+  tools/client-config.sh ${HOST} m0$i 1000
 done
 ```
 
@@ -139,8 +143,9 @@ done
 ```bash
 cd ${PROJECT_HOME}
 for i in $(seq -w 1 ${NUM_MACHINES}); do
- export MACHINE_ID=m0$i
- docker run --rm -d --name m0$i-simulator --env-file configs/m0$i.env ghcr.io/nsubrahm/restsim:latest
+  export MACHINE_ID=m0$i
+  docker run --rm -d --name m0$i-simulator --env-file configs/m0$i.env ghcr.io/nsubrahm/restsim:latest
+  sleep 5
 done
 ```
 
@@ -150,8 +155,8 @@ done
 
 ```bash
 for i in $(seq -w 1 ${NUM_MACHINES}); do
- export MACHINE_ID=m0$i
- docker stop m0$i-simulator
+  export MACHINE_ID=m0$i
+  docker stop m0$i-simulator
 done
 ```
 
@@ -164,7 +169,6 @@ for i in $(seq -w 1 ${NUM_MACHINES}); do
   export CONF_DIR=m0$i
   source launch/conf/${CONF_DIR}/init.env && docker compose --env-file launch/conf/${CONF_DIR}/init.env -f launch/stacks/init.yaml down
   source launch/conf/${CONF_DIR}/apps.env && docker compose --env-file launch/conf/${CONF_DIR}/apps.env -f launch/stacks/apps.yaml down
-  sleep 5
 done
 ```
 

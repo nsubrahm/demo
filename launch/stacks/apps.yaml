@@ -66,8 +66,6 @@ services:
         condition: service_healthy    
     env_file:
       - ../conf/${CONF_DIR}/collector.env
-    networks:
-      - mitra
     deploy:
       mode: replicated
       replicas: ${REPLICAS:-1}
@@ -77,6 +75,10 @@ services:
       timeout: 30s
       retries: 3
       start_period: 10s
+    networks:
+      mitra:
+        aliases:
+          - ${MACHINE_ID:-default}-collector
 
   persist:
     image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/persist:${PERSIST_TAG:-latest}
