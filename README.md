@@ -98,6 +98,27 @@ for i in $(seq -w 1 ${NUM_MACHINES}); do
 done
 ```
 
+9. Set-up folder for logs of ML jobs.
+
+```bash
+mkdir -p launch/batch/logs
+```
+
+10. Add the following `cron` entry for as many machines that were launched.
+
+```bash
+0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m001 latest
+0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m002 latest
+0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m003 latest
+0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m004 latest
+0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m005 latest
+0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m006 latest
+0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m007 latest
+0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m008 latest
+0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m009 latest
+0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m010 latest
+```
+
 ## Steps - Simulator
 
 These steps are to be hosted on `t4g.medium` instance to host the simulator.
