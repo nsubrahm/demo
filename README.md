@@ -5,6 +5,7 @@ This project documents steps to launch a demo with `NUM_MACHINES` machines.
 - [Introduction](#introduction)
   - [Pre-requisites](#pre-requisites)
   - [Steps - Demo](#steps---demo)
+  - [Configure machines and limits](#configure-machines-and-limits)
   - [Steps - Simulator](#steps---simulator)
   - [Clean-up - Simulators](#clean-up---simulators)
   - [Clean-up - Demo](#clean-up---demo)
@@ -117,6 +118,49 @@ mkdir -p launch/batch/logs
 0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m008 latest
 0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m009 latest
 0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m010 latest
+```
+
+## Configure machines and limits
+
+1. Launch a container with `alpine` image.
+
+```bash
+docker run --name kcat -it --network mitra alpine
+```
+
+2. Install Kafka CLI.
+
+```bash
+apk add kcat
+```
+
+3. Add machines.
+
+```bash
+kcat -b broker:29092 -t machines_master -K: -P <<EOF
+m001:{"meta":{"id":"7693f39a-7898-466f-968e-7868db1b3bd2","ts":"2025-07-10T18:44:28.235","type":"machine"},"machine":{"machineId":"m002","label":"LINE01-MILL02","description":"Milling Machine 1 - Line 1"}}
+m002:{"meta":{"id":"7693f39a-7898-466f-968e-7868db1b3bd2","ts":"2025-07-10T18:44:28.235","type":"machine"},"machine":{"machineId":"m002","label":"LINE01-MILL02","description":"Milling Machine 2 - Line 1"}}
+m003:{"meta":{"id":"6b346b7e-a56a-40b1-866b-b5144bce890b","ts":"2025-07-10T18:44:29.235","type":"machine"},"machine":{"machineId":"m003","label":"LINE01-MILL03","description":"Milling Machine 3 - Line 1"}}
+m004:{"meta":{"id":"128f0e34-ab91-49ad-b6df-557d5fa34ff1","ts":"2025-07-10T18:44:30.235","type":"machine"},"machine":{"machineId":"m004","label":"LINE01-MILL04","description":"Milling Machine 4 - Line 1"}}
+m005:{"meta":{"id":"17163219-09fe-4ef0-849a-6974997d72aa","ts":"2025-07-10T18:44:31.235","type":"machine"},"machine":{"machineId":"m005","label":"LINE01-MILL05","description":"Milling Machine 5 - Line 1"}}
+m006:{"meta":{"id":"c4a78e28-f62c-4386-aba6-81660c68e9ef","ts":"2025-07-10T18:44:32.235","type":"machine"},"machine":{"machineId":"m006","label":"LINE01-MILL06","description":"Milling Machine 6 - Line 1"}}
+m007:{"meta":{"id":"da9348a5-3556-41b6-98d1-696dfac8e379","ts":"2025-07-10T18:44:33.235","type":"machine"},"machine":{"machineId":"m007","label":"LINE01-MILL07","description":"Milling Machine 7 - Line 1"}}
+m008:{"meta":{"id":"9c16910e-46c7-41f5-a47a-9a472bd2dc8d","ts":"2025-07-10T18:44:34.235","type":"machine"},"machine":{"machineId":"m008","label":"LINE01-MILL08","description":"Milling Machine 8 - Line 1"}}
+m009:{"meta":{"id":"6028cf32-21e8-4189-90cb-aa8e13651635","ts":"2025-07-10T18:44:35.235","type":"machine"},"machine":{"machineId":"m009","label":"LINE01-MILL09","description":"Milling Machine 9 - Line 1"}}
+m010:{"meta":{"id":"bc66aa49-435a-4967-8269-2c47966b2eb5","ts":"2025-07-10T18:44:36.235","type":"machine"},"machine":{"machineId":"m010","label":"LINE01-MILL10","description":"Milling Machine 10 - Line 1"}}
+EOF
+```
+
+4. Configure limits for each machine by changing `machineId` from `m001` to `m010`.
+
+```bash
+kcat -b broker:29092 -t machineId_limits -K: -P <<EOF
+spindleLoad:{"meta":{"id":"1","ts":"2023-12-27T22:53:00.000"}, "limits":[{"key":"spindleLoad", "lo":0, "hi":50}]}
+spindleTemperature:{"meta":{"id":"2","ts":"2023-12-27T22:53:00.000"}, "limits":[{"key":"spindleTemperature", "lo":1,"hi":150}]}
+spindleMotorCurrent:{"meta":{"id":"3","ts":"2023-12-27T22:53:00.000"}, "limits":[{"key":"spindleMotorCurrent", "lo":2,"hi":8}]}
+spindleMotorVoltage:{"meta":{"id":"4","ts":"2023-12-27T22:53:00.000"}, "limits":[{"key":"spindleMotorVoltage", "lo":10,"hi":25}]}
+spindleSpeed:{"meta":{"id":"5","ts":"2023-12-27T22:53:00.000"}, "limits":[{"key":"spindleSpeed", "lo":0,"hi":20000}]}
+EOF
 ```
 
 ## Steps - Simulator
