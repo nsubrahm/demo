@@ -32,6 +32,12 @@ services:
     networks:
       - mitra
 
+  mqtt:
+    container_name: ${COMPOSE_PROJECT_NAME}-mqtt
+    image: eclipse-mosquitto:latest
+    networks:
+      - mitra
+
   tscaledb:
     container_name: ${COMPOSE_PROJECT_NAME}-tscaledb
     image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/tscaledb:${TSCALEDB_TAG:-latest}
@@ -49,7 +55,6 @@ services:
       - mitra
 
   bouncer:
-    container_name: ${COMPOSE_PROJECT_NAME}-bouncer
     image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/bouncer:${BOUNCER_TAG:-latest}
     depends_on:
       tscaledb:

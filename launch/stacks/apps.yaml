@@ -17,10 +17,28 @@ services:
         aliases:
           - ${MACHINE_ID:-default}-httpin
 
+  mqttin:
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/mqtt-inputs:${MQTT_INPUTS_TAG:-latest}
+    env_file:
+      - ../conf/${CONF_DIR}/mqttInputs.env
+    deploy:
+      mode: replicated
+      replicas: ${REPLICAS:-1}      
+    healthcheck:
+      test: /work/health
+      interval: 2s
+      timeout: 30s
+      retries: 3
+      start_period: 10s
+    networks:
+      - mitra
+
   alarms:
     image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/alarms:${ALARMS_TAG:-latest}
     depends_on:
       httpin:
+        condition: service_healthy
+      mqttin:
         condition: service_healthy
     env_file:
       - ../conf/${CONF_DIR}/alarms.env
@@ -40,7 +58,9 @@ services:
     image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/alerts:${ALERTS_TAG:-latest}
     depends_on:
       httpin:
-        condition: service_healthy    
+        condition: service_healthy
+      mqttin:
+        condition: service_healthy
     env_file:
       - ../conf/${CONF_DIR}/alerts.env
     deploy:
@@ -58,8 +78,6 @@ services:
   collector:
     image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/collector:${COLLECTOR_TAG:-latest}
     depends_on:
-      httpin:
-        condition: service_healthy
       alarms:
         condition: service_healthy
       alerts:
