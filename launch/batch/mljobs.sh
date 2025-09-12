@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#==============================#
-# ML Job Container Launcher 🐳 #
-#==============================#
+#===========================#
+# ML Job Container Launcher #
+#===========================#
 
 MACHINE_ID="${1:-m001}"
 CONTAINER_NAME_TAG="${2:-latest}"

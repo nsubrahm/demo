@@ -4,9 +4,9 @@ This project documents steps to launch a demo with `NUM_MACHINES` machines.
 
 - [Introduction](#introduction)
   - [Pre-requisites](#pre-requisites)
-  - [Steps - Demo](#steps---demo)
-  - [Configure machines and limits](#configure-machines-and-limits)
-  - [Steps - Simulator](#steps---simulator)
+  - [Install demo](#install-demo)
+  - [Configure demo](#configure-demo)
+  - [Set-up simulator](#set-up-simulator)
   - [Clean-up - Simulators](#clean-up---simulators)
   - [Clean-up - Demo](#clean-up---demo)
 
@@ -15,11 +15,11 @@ This project documents steps to launch a demo with `NUM_MACHINES` machines.
 1. EC2 instance - `m8g.xlarge` and additional volume of 16 GiB.
 2. EC2 instance - `t4g.medium` to host the simulators.
 
-## Steps - Demo
+## Install demo
 
 These steps are to be hosted on `m8g.xlarge` instance to install the demo.
 
-1. Clone repo.
+1. Clone repo and initialize environment variables.
 
 ```bash
 git clone https://github.com/nsubrahm/demo.git
@@ -35,7 +35,7 @@ echo "export NUM_MACHINES=10" >> $HOME/.bashrc
 echo "export PROJECT_HOME=$HOME/demo" >> $HOME/.bashrc
 ```
 
-2. Set-up volume for PostgreSQL. Check `lsblk` output to confirm secondary volume exists.
+2. Set-up volume for PostgreSQL. Check `lsblk` output to confirm secondary volume exists. Set-up `DEVICE_ID` variable if required.
 
 ```bash
 cd ${PROJECT_HOME}/setup
@@ -44,12 +44,16 @@ for i in $(seq -w 1 ${NUM_MACHINES}); do
 done
 ```
 
+Verify that `/mnt/pg` has folders for different machines e.g., `m001`, `m002`, etc.
+
 3. Install Docker
 
 ```bash
 cd ${PROJECT_HOME}/setup
 sudo ./install-docker.sh
 ```
+
+Log out and log in to this machine so that `docker` commands can be run without `sudo`.
 
 4. Generate general configuration.
 
@@ -120,7 +124,7 @@ mkdir -p launch/batch/logs
 0 */8 * * * $HOME/launcher/launch/batch/mljobs.sh m010 latest
 ```
 
-## Configure machines and limits
+## Configure demo
 
 1. Launch a container with `alpine` image.
 
@@ -163,11 +167,11 @@ spindleSpeed:{"meta":{"id":"5","ts":"2023-12-27T22:53:00.000"}, "limits":[{"key"
 EOF
 ```
 
-## Steps - Simulator
+## Set-up simulator
 
 These steps are to be hosted on `t4g.medium` instance to host the simulator.
 
-1. Clone repo.
+1. Clone repo and initialize environment variables.
 
 ```bash
 git clone https://github.com/nsubrahm/demo.git
@@ -181,7 +185,7 @@ echo "export NUM_MACHINES=10" >> $HOME/.bashrc
 echo "export PROJECT_HOME=$HOME/demo" >> $HOME/.bashrc
 ```
 
-2. Install Docker
+2. Install Docker.
 
 ```bash
 cd ${PROJECT_HOME}/setup
@@ -203,7 +207,7 @@ for i in $(seq -w 1 ${NUM_MACHINES}); do
 done
 ```
 
-5. Start simulators.
+5. Start simulators. Ensure that the security group of the `demo` machine allows traffic from the `simulator` machine.
 
 ```bash
 cd ${PROJECT_HOME}
@@ -224,6 +228,8 @@ for i in $(seq -w 1 ${NUM_MACHINES}); do
   docker stop m0$i-simulator
 done
 ```
+
+2. Shut down machine with `sudo shutdown now`.
 
 ## Clean-up - Demo
 
@@ -248,3 +254,5 @@ source launch/conf/${CONF_DIR}/gateway.env && docker compose --env-file launch/c
 # Remove network
 docker network rm mitra
 ```
+
+3. Shut down machine with `sudo shutdown now`.
