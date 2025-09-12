@@ -34,7 +34,7 @@ services:
 
   mqtt:
     container_name: ${COMPOSE_PROJECT_NAME}-mqtt
-    image: eclipse-mosquitto:latest
+    image: ${CONTAINER_REGISTRY}/${CONTAINER_REPOSITORY}/mosquitto:${MOSQUITTO_TAG:-latest}
     networks:
       - mitra
 

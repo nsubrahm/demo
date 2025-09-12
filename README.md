@@ -28,10 +28,10 @@ chmod +x setup/*.sh
 chmod +x tools/*.sh
 # Set-up
 alias python=python3
-export NUM_MACHINES=10
+export NUM_MACHINES=3
 export PROJECT_HOME=$HOME/demo
 echo "alias python=python3" >> $HOME/.bashrc
-echo "export NUM_MACHINES=10" >> $HOME/.bashrc
+echo "export NUM_MACHINES=3" >> $HOME/.bashrc
 echo "export PROJECT_HOME=$HOME/demo" >> $HOME/.bashrc
 ```
 
@@ -44,7 +44,7 @@ for i in $(seq -w 1 ${NUM_MACHINES}); do
 done
 ```
 
-Verify that `/mnt/pg` has folders for different machines e.g., `m001`, `m002`, etc.
+Verify that `/mnt/pg` has folders for different machines e.g., `m01`, `m02`, etc.
 
 3. Install Docker
 
