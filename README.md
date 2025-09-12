@@ -12,12 +12,12 @@ This project documents steps to launch a demo with `NUM_MACHINES` machines.
 
 ## Pre-requisites
 
-1. EC2 instance - `m7g.4xlarge` and additional volume of 16 GiB.
+1. EC2 instance - `m8g.xlarge` and additional volume of 16 GiB.
 2. EC2 instance - `t4g.medium` to host the simulators.
 
 ## Steps - Demo
 
-These steps are to be hosted on `r8g.large` instance to install the demo.
+These steps are to be hosted on `m8g.xlarge` instance to install the demo.
 
 1. Clone repo.
 
