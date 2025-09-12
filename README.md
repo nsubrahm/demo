@@ -39,7 +39,7 @@ echo "export PROJECT_HOME=$HOME/demo" >> $HOME/.bashrc
 
 ```bash
 cd ${PROJECT_HOME}/setup
-for i in $(seq -w 1 ${NUM_MACHINES}); do
+for i in $(seq -f "%02g" 1 ${NUM_MACHINES}); do
   ./pg-vol-setup.sh org1 m0$i
 done
 ```
@@ -67,7 +67,7 @@ python scripts/main.py -f configs/config.json
 
 ```bash
 cd ${PROJECT_HOME}
-for i in $(seq -w 1 ${NUM_MACHINES}); do
+for i in $(seq -f "%02g" 1 ${NUM_MACHINES}); do
   mkdir -p launch/conf/m0$i
   tools/config-gen.sh m0$i
   python scripts/main.py -f configs/m0$i.json -m m0$i
@@ -95,7 +95,7 @@ source launch/conf/${CONF_DIR}/gateway.env && docker compose --env-file launch/c
 8. Launch applications for machines.
 
 ```bash
-for i in $(seq -w 1 ${NUM_MACHINES}); do
+for i in $(seq -f "%02g" 1 ${NUM_MACHINES}); do
   export CONF_DIR=m0$i
   source launch/conf/${CONF_DIR}/init.env && docker compose --env-file launch/conf/${CONF_DIR}/init.env -f launch/stacks/init.yaml up -d
   source launch/conf/${CONF_DIR}/apps.env && docker compose --env-file launch/conf/${CONF_DIR}/apps.env -f launch/stacks/apps.yaml up -d
@@ -202,7 +202,7 @@ docker login ghcr.io -u USERNAME
 
 ```bash
 cd ${PROJECT_HOME}
-for i in $(seq -w 1 ${NUM_MACHINES}); do
+for i in $(seq -f "%02g" 1 ${NUM_MACHINES}); do
   tools/client-config.sh ${HOST} m0$i 1000
 done
 ```
@@ -211,7 +211,7 @@ done
 
 ```bash
 cd ${PROJECT_HOME}
-for i in $(seq -w 1 ${NUM_MACHINES}); do
+for i in $(seq -f "%02g" 1 ${NUM_MACHINES}); do
   export MACHINE_ID=m0$i
   docker run --rm -d --name m0$i-simulator --env-file configs/m0$i.env ghcr.io/nsubrahm/restsim:latest
   sleep 5
@@ -223,7 +223,7 @@ done
 1. Stop all running simulators.
 
 ```bash
-for i in $(seq -w 1 ${NUM_MACHINES}); do
+for i in $(seq -f "%02g" 1 ${NUM_MACHINES}); do
   export MACHINE_ID=m0$i
   docker stop m0$i-simulator
 done
@@ -236,7 +236,7 @@ done
 1. Stop all running applications.
 
 ```bash
-for i in $(seq -w 1 ${NUM_MACHINES}); do
+for i in $(seq -f "%02g" 1 ${NUM_MACHINES}); do
   export CONF_DIR=m0$i
   source launch/conf/${CONF_DIR}/init.env && docker compose --env-file launch/conf/${CONF_DIR}/init.env -f launch/stacks/init.yaml down
   source launch/conf/${CONF_DIR}/apps.env && docker compose --env-file launch/conf/${CONF_DIR}/apps.env -f launch/stacks/apps.yaml down
