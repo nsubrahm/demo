@@ -5,12 +5,12 @@ services:
     env_file:
       - ../conf/general/general.env
       - ../conf/general/controller-1.env
-    healthcheck:
-      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092"]
-      interval: 2s
-      timeout: 30s
-      retries: 3
-      start_period: 10s
+    # healthcheck:
+    #   test: ["CMD-SHELL", "/bin/kafka-metadata-quorum.sh --bootstrap-controller controller1:29093 describe --status | grep -q 'RUNNING' || exit 1"]
+    #   interval: 2s
+    #   timeout: 30s
+    #   retries: 3
+    #   start_period: 10s
     networks:
       - mitra
 
@@ -20,12 +20,12 @@ services:
     env_file:
       - ../conf/general/general.env
       - ../conf/general/controller-2.env
-    healthcheck:
-      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092"]
-      interval: 2s
-      timeout: 30s
-      retries: 3
-      start_period: 10s
+    # healthcheck:
+    #   test: ["CMD-SHELL", "/bin/kafka-metadata-quorum.sh --bootstrap-controller controller2:29093 describe --status | grep -q 'RUNNING' || exit 1"]
+    #   interval: 2s
+    #   timeout: 30s
+    #   retries: 3
+    #   start_period: 10s
     networks:
       - mitra
 
@@ -35,27 +35,25 @@ services:
     env_file:
       - ../conf/general/general.env
       - ../conf/general/controller-3.env
-    healthcheck:
-      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "localhost:9092"]
-      interval: 2s
-      timeout: 30s
-      retries: 3
-      start_period: 10s
+    # healthcheck:
+    #   test: ["CMD-SHELL", "/bin/kafka-metadata-quorum.sh --bootstrap-controller controller3:29093 describe --status | grep -q 'RUNNING' || exit 1"]
+    #   interval: 2s
+    #   timeout: 30s
+    #   retries: 3
+    #   start_period: 10s
     networks:
       - mitra
 
   broker1:
     container_name: ${COMPOSE_PROJECT_NAME}-broker-1
     image: confluentinc/cp-kafka:${KAFKA_TAG:-latest}
-    depends_on:
-      controller1:
-        condition: service_healthy
-    depends_on:
-      controller2:
-        condition: service_healthy
-    depends_on:
-      controller3:
-        condition: service_healthy
+    # depends_on:
+    #   controller1:
+    #     condition: service_healthy
+    #   controller2:
+    #     condition: service_healthy
+    #   controller3:
+    #     condition: service_healthy
     env_file:
       - ../conf/general/general.env
       - ../conf/general/broker-1.env
@@ -71,15 +69,13 @@ services:
   broker2:
     container_name: ${COMPOSE_PROJECT_NAME}-broker-2
     image: confluentinc/cp-kafka:${KAFKA_TAG:-latest}
-    depends_on:
-      controller1:
-        condition: service_healthy
-    depends_on:
-      controller2:
-        condition: service_healthy
-    depends_on:
-      controller3:
-        condition: service_healthy
+    # depends_on:
+    #   controller1:
+    #     condition: service_healthy
+    #   controller2:
+    #     condition: service_healthy
+    #   controller3:
+    #     condition: service_healthy
     env_file:
       - ../conf/general/general.env
       - ../conf/general/broker-2.env
@@ -95,15 +91,13 @@ services:
   broker3:
     container_name: ${COMPOSE_PROJECT_NAME}-broker-3
     image: confluentinc/cp-kafka:${KAFKA_TAG:-latest}
-    depends_on:
-      controller1:
-        condition: service_healthy
-    depends_on:
-      controller2:
-        condition: service_healthy
-    depends_on:
-      controller3:
-        condition: service_healthy    
+    # depends_on:
+    #   controller1:
+    #     condition: service_healthy
+    #   controller2:
+    #     condition: service_healthy
+    #   controller3:
+    #     condition: service_healthy    
     env_file:
       - ../conf/general/general.env
       - ../conf/general/broker-3.env
