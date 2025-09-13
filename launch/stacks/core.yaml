@@ -47,6 +47,15 @@ services:
   broker1:
     container_name: ${COMPOSE_PROJECT_NAME}-broker-1
     image: confluentinc/cp-kafka:${KAFKA_TAG:-latest}
+    depends_on:
+      controller1:
+        condition: service_healthy
+    depends_on:
+      controller2:
+        condition: service_healthy
+    depends_on:
+      controller3:
+        condition: service_healthy
     env_file:
       - ../conf/general/general.env
       - ../conf/general/broker-1.env
@@ -62,6 +71,15 @@ services:
   broker2:
     container_name: ${COMPOSE_PROJECT_NAME}-broker-2
     image: confluentinc/cp-kafka:${KAFKA_TAG:-latest}
+    depends_on:
+      controller1:
+        condition: service_healthy
+    depends_on:
+      controller2:
+        condition: service_healthy
+    depends_on:
+      controller3:
+        condition: service_healthy
     env_file:
       - ../conf/general/general.env
       - ../conf/general/broker-2.env
@@ -77,6 +95,15 @@ services:
   broker3:
     container_name: ${COMPOSE_PROJECT_NAME}-broker-3
     image: confluentinc/cp-kafka:${KAFKA_TAG:-latest}
+    depends_on:
+      controller1:
+        condition: service_healthy
+    depends_on:
+      controller2:
+        condition: service_healthy
+    depends_on:
+      controller3:
+        condition: service_healthy    
     env_file:
       - ../conf/general/general.env
       - ../conf/general/broker-3.env
@@ -93,7 +120,11 @@ services:
     container_name: ${COMPOSE_PROJECT_NAME}-ksqldb
     image: confluentinc/cp-ksqldb-server:${KAFKA_SQLDB_TAG:-latest}
     depends_on:
-      broker:
+      broker1:
+        condition: service_healthy
+      broker2:
+        condition: service_healthy
+      broker3:
         condition: service_healthy
     env_file:
       - ../conf/general/general.env
